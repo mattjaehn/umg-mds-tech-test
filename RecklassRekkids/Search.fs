@@ -94,9 +94,8 @@ let parseArgs (aa: string list) =
         | _ -> None
 
 
-let parseContracts filePath =
-    filePath
-    |> readAllLinesOrDie
+let parseContracts lns =
+    lns
     //|> File.ReadAllLines
 //    |> Seq.map(fun x -> printf "LINE: %A\n" x; x)
     |> Seq.skip(1)  // skip header line
@@ -116,10 +115,14 @@ let parseContracts filePath =
         | _ -> None)
     |> unlift
 
-let parsePartners filePath =
+let parseContractsFromFileOrDie filePath =
     filePath
     |> readAllLinesOrDie
-    //|> File.ReadAllLines
+    |> parseContracts
+
+
+let parsePartners lns =
+    lns
     |> Seq.skip(1)
     |> Seq.map (fun (ln:string) ->
         match ln.Split("|") with
@@ -131,7 +134,10 @@ let parsePartners filePath =
         | _ -> None)
     |> unlift
 
-
+let parsePartnersFromFileOrDie filePath =
+    filePath
+    |> readAllLinesOrDie
+    |> parsePartners
 
 // this is a function to construct (hence "cons" in the name) the function
 // that we will use for searching.
@@ -163,6 +169,7 @@ let consDoSearch contracts partners partnerName effectiveDate =
     // and now we filter out by those empty usages, and we now have our answer.
     |> Seq.filter(fun c -> c.Usages |> Seq.length > 0)
 
+type ContractSearchType = string -> DateTime -> seq<Contract> 
 
 
 

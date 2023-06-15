@@ -9,9 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include=".\data\contracts.txt" />
+    <EmbeddedResource Include=".\data\partners.txt" />
+    <EmbeddedResource Include="Search.feature" />
+    <Compile Include="SearchSteps.fs" />
+    <Compile Include="MSTestWiring.fs" />
     <Compile Include="Tests.fs" />
     <Compile Include="Program.fs" />
-    <Compile Include="MSTestWiring.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,4 +32,10 @@
     <ProjectReference Include="..\RecklassRekkids\RecklassRekkids.fsproj" />
   </ItemGroup>
 
+  <ItemGroup>
+      <Reference Include="System.Runtime" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="data\" />
+  </ItemGroup>
 </Project>

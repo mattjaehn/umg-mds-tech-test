@@ -34,4 +34,5 @@ type FeatureFixture () =
         |> Seq.filter (fun (n:string) -> n.EndsWith(".feature") )
         |> Seq.collect (fun n ->
             definitions.GenerateFeature(n, assembly.GetManifestResourceStream(n)).Scenarios )
+        |> Seq.map (fun s -> printf "scenario: %A\n\n" s; s)
         |> Seq.map (fun i -> [| i |] )
