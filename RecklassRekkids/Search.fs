@@ -1,10 +1,7 @@
 ﻿module RecklassRekkids.Search
 
 open System
-open FSharp.Data
 open System.Linq
-open System.IO
-
 open Misc
 
 type RRArgs =
@@ -51,16 +48,6 @@ let collapseListOfOpts listOfOpts =
     Some([]) |> (listOfOpts |> loop)
 
 
-//let antiLift listOfOpts =
-//    let rec loop listOfOpts acc =
-//        match listOfOpts with
-//        | [] -> acc
-//        | Some(x)::tail -> loop tail (x::acc)
-//        | None::tail -> []
-//    loop listOfOpts []
-
-
-
 let parseUsagesColumn (str:string) =
     str.Split(", ")
     |> Seq.map(UsageType.FromString)
@@ -83,7 +70,6 @@ let unlift xx =
 
 
  // handle command line args
-
 let parseArgs (aa: string list) =
     match aa.Length with
     | l when l < 4 -> None
@@ -100,8 +86,6 @@ let parseArgs (aa: string list) =
 
 let parseContracts lns =
     lns
-    //|> File.ReadAllLines
-//    |> Seq.map(fun x -> printf "LINE: %A\n" x; x)
     |> Seq.skip(1)  // skip header line
     |> Seq.map(fun (ln:string) ->
 
@@ -174,23 +158,3 @@ let consDoSearch contracts partners partnerName effectiveDate =
     |> Seq.filter(fun c -> c.Usages |> Seq.length > 0)
 
 type ContractSearchType = string -> DateTime -> seq<Contract> 
-
-
-
-
-
-
-
-//let h =
-//    "./data/contracts.txt"
-//    |> File.ReadLines
-//    |> Seq.iter (fun ln ->
-//        printf "LINE: %A\n" ln)
-
-
-
-
-
-
-
-

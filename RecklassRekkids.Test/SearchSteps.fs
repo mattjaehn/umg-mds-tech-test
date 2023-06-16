@@ -19,7 +19,6 @@ let getDataLines (fileName:string) =
     let rns =
         assembly.GetManifestResourceNames()
         |> Seq.filter (fun (n:string) -> n.EndsWith(fileName))
-        //|> Seq.map (fun (n:string) -> assembly.GetManifestResourceStream(n))
 
     // not really what we are testing in terms of app functionality, but
     // does serve to verify some of the fsproj config...
@@ -111,7 +110,6 @@ let [<Then>] ``the output should be`` (expectedUnsorted:SearchResultRow[]) (sear
     actual
     |> Array.iteri(fun indx actualElem ->
         let expectedElem = expected.[indx]
-        //let actualElem = actual.[indx]
         Assert.AreEqual(actualElem, expectedElem))
 
 
