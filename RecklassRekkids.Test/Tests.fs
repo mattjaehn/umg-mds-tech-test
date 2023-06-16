@@ -36,11 +36,3 @@ type FeatureFixture () =
         |> Seq.map (fun s -> printf "scenario: %A\n\n" s; s)
         |> Seq.map (fun i -> [| i |] )
 
-
-
-//[<TestClass>]
-//type TestClass () =
-
-//    [<TestMethod>]
-//    member this.TestMethodPassing () =
-//        Assert.IsTrue(true);
