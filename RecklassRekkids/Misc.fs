@@ -42,6 +42,6 @@ let readAllLinesOrDie filePath =
     | Ok(lns) -> lns
     | Error(err) ->
         printf "Fatal error while trying to read %A - %A.  Goodbye." filePath err
-        Environment.Exit 1
+        Environment.Exit 2
         // we never get here but in order to keep the function signature sane.
         [||]
