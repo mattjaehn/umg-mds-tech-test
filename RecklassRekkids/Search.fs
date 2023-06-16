@@ -23,6 +23,10 @@ with
         | "digital download" -> Some(DigitalDownload)
         | "streaming" -> Some(Streaming)
         | _ -> None
+    member me.ToString =
+        match me with
+        | DigitalDownload -> "digital download"
+        | Streaming -> "streaming"
 
 
 type Contract =

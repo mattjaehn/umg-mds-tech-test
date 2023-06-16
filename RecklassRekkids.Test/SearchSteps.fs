@@ -9,12 +9,9 @@ open Search
 open TickSpec
 
 
-
+// to read the provided data from our resources
 let contractsPath = @"contracts.txt"
 let partnersPath  = @"partners.txt"
-
-
-
 
 let getDataLines (fileName:string) =
     let assembly = Assembly.GetExecutingAssembly()
@@ -32,21 +29,48 @@ let getDataLines (fileName:string) =
     let rnsArr = rns |> Seq.toArray
     let rn = rnsArr.[0]
 
-    let lns = 
-        new StreamReader(assembly.GetManifestResourceStream(rn))
-        |> Seq.unfold (fun sr ->
-        match sr.ReadLine() with
-        | null -> sr.Dispose(); None
-        | str -> Some(str, sr))
-        // the proceeding sequence reading the stream is lazy.
-        // we pipe it to toArray to force evaluation (reading, disposing, etc)
-        |> Seq.toArray
+    new StreamReader(assembly.GetManifestResourceStream(rn))
+    |> Seq.unfold (fun sr ->
+    match sr.ReadLine() with
+    | null -> sr.Dispose(); None
+    | str -> Some(str, sr))
+    // the proceeding sequence reading the stream is lazy.
+    // we pipe it to toArray to force evaluation (reading, disposing, etc)
+    |> Seq.toArray
 
-    lns
     
 
+// functions to compare our Contract types with the Tables provided in the BDD.
+type SearchResultRow = {
+    Artist:string; Title:string; Usages:string; StartDate:string; EndDate:string }
+
+let contractToSearchResultRow (contract:Contract) : SearchResultRow =
+    let endDateStr =
+        match contract.EndDate with
+        | Some(dt) -> dt.ToString("MM-dd-yyyy")
+        | None -> ""
+    let usagesStrArr =
+        contract.Usages
+        |> Seq.map(fun u -> u.ToString)
+        |> Seq.toArray
+
+    let usagesStr = (", ", usagesStrArr) |> String.Join
+
+    {   Artist = contract.Artist;
+        Title = contract.Title;
+        Usages = usagesStr;
+        StartDate = contract.StartDate.ToString("MM-dd-yyyy");
+        EndDate = endDateStr }
 
 
+// implementing the BDD clauses
+//
+// NOTE that the return value of one clause gets passed as the last parameter of
+// the following clause.
+// this allows us, in particular, to keep things functional while still establishing the
+// Given context (our curried doSearch) which is then used in the When, which in turn provides the
+// actual search results to the Then, which compares those results against the expected
+// table from the BDD.
 let [<Given>] ``the supplied reference data`` () =
     let contracts = parseContracts (getDataLines contractsPath)
     let partners = parsePartners (getDataLines partnersPath)
@@ -70,6 +94,26 @@ let [<When>] ``user perform search by (.*) (.*)`` (partner:string) (effectiveDat
     ans
 
 
-let [<Then>] ``the output should be`` (expected:Table) (actual:seq<Contract>) =
+let [<Then>] ``the output should be`` (expectedUnsorted:SearchResultRow[]) (searchResults:seq<Contract>) =
+
+    let actual =
+        searchResults
+        |> Seq.map(contractToSearchResultRow)
+        |> Seq.toArray
+        |> Array.sort
+
+    let expected =
+        expectedUnsorted
+        |> Array.sort
+
+    Assert.AreEqual(actual.Length, expected.Length)
+
+    actual
+    |> Array.iteri(fun indx actualElem ->
+        let expectedElem = expected.[indx]
+        //let actualElem = actual.[indx]
+        Assert.AreEqual(actualElem, expectedElem))
+
+
     Assert.AreEqual(false, false)
     ()

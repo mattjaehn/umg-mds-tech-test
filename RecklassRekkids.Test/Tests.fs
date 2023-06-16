@@ -6,6 +6,8 @@ open TickSpec
 open System.Reflection
 open System.Runtime.ExceptionServices
 
+// taken from tickspec github -
+// https://github.com/fsprojects/TickSpec/blob/master/Examples/ByFramework/MSTest/MSTest.FSharp/MSTestWiring.fs
 /// Class containing all BDD tests in current assembly as MSTest unit tests
 [<TestClass>]
 type FeatureFixture () =
